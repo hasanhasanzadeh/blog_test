@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::group(['middleware'=>'api','prefix'=>'v1','namespace'=>'App\Http\Controllers\Api\V1'],function(){
+        Route::get('/posts','PostController@index');
+        Route::get('/posts/{post}','PostController@show');
+    Route::get('/categories','CategoryController@index');
+    Route::get('/categories/{category}','CategoryController@show');
 });
