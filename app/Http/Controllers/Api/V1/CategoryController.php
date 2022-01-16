@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Exceptions\NotfoundCategoryException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\CategoryCollection;
 use App\Http\Resources\V1\CategoryResource;
 use App\Models\Category;
+use http\Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class CategoryController extends Controller
 {
@@ -47,10 +50,11 @@ class CategoryController extends Controller
      *
      * @param Category $category
      * @return CategoryResource
+     *
      */
     public function show(Category $category): CategoryResource
     {
-        return new CategoryResource($category);
+            return new CategoryResource($category);
     }
 
     /**
