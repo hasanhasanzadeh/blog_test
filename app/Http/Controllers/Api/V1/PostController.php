@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PostRequest;
 use App\Http\Resources\V1\PostCollection;
 use App\Http\Resources\V1\PostResource;
 use App\Models\Post;
@@ -37,9 +38,20 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        //
+        $post=new Post();
+        $post->title=$request->title;
+        $post->description=$request->description;
+        $post->slug=$request->slug;
+        $post->photo_url=$request->photo_url;
+        $post->category_id=$request->category_id;
+        $post->user_id=auth()->user()->id;
+        $post->save();
+        return response()->json([
+            'data'=>new PostResource($post),
+            'status'=>'success'
+        ],200);
     }
 
     /**
@@ -48,7 +60,7 @@ class PostController extends Controller
      * @param Post $post
      * @return PostResource
      */
-    public function show(Post $post): PostResource
+    public function show(Post $post)
     {
         return new PostResource($post);
     }
@@ -71,9 +83,18 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+        $post->title=$request->title;
+        $post->description=$request->description;
+        $post->slug=$request->slug;
+        $post->photo_url=$request->photo_url;
+        $post->user_id=auth()->user()->id;
+        $post->save();
+        return response()->json([
+            'data'=>new PostResource($post),
+            'status'=>'success'
+        ],200);
     }
 
     /**
@@ -84,6 +105,10 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post=Post::findOrFail($id)->delete();
+        return response()->json([
+            'data'=>'done!',
+            'status'=>'delete success user'
+        ],204);
     }
 }
