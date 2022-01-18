@@ -31,5 +31,15 @@ Route::group(['middleware'=>'api', 'prefix'=>'v1/auth','namespace'=>'App\Http\Co
     Route::post('/logout','UserController@logout');
     Route::post('/refresh','UserController@refresh');
     Route::get('/profile','UserController@profile');
+
+    Route::group(['middleware'=>'auth:api'],function (){
+       Route::post('/comments/store','CommentController@store');
+          Route::group(['middleware'=>'isAdmin','prefix'=>'panel'],function (){
+              Route::get('/users','UserController@index');
+          });
+    });
+
+
 });
+
 

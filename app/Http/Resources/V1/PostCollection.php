@@ -17,6 +17,7 @@ class PostCollection extends ResourceCollection
         return [
           'data'=>$this->collection->map(function ($item){
              return [
+                'id'=>$item->id,
                 'title'=>$item->title,
                 'slug'=>$item->slug,
                 'body'=>$item->description,
@@ -24,6 +25,7 @@ class PostCollection extends ResourceCollection
                  'categoryName'=>$item->category->name,
                 'Author'=>$item->user->name,
                  'commentCount'=>count($item->comments),
+                 'comments'=>$item->comments,
                 'createdTim'=>(string) $item->created_at
              ] ;
           })

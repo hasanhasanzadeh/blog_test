@@ -5,11 +5,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\V1\UserCollection;
 use App\Http\Resources\V1\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -19,7 +18,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api',['except'=>['login','register']]);
+        $this->middleware('auth:api',['except'=>['login','register','index']]);
     }
 
     /**
@@ -90,6 +89,12 @@ class UserController extends Controller
     public function profile()
     {
             return response()->json(auth()->user());
+    }
+
+    public function index()
+    {
+        $users=User::paginate(10);
+        return new UserCollection($users);
     }
 
 }

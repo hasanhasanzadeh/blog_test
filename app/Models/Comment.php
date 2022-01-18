@@ -11,10 +11,12 @@ class Comment extends Model
     protected $table='comments';
     protected $fillable=[
       'body',
+      'user_id',
       'commentable_type',
       'commentable_id',
       'status'
     ];
+
 
     public function commentable()
     {
@@ -23,7 +25,7 @@ class Comment extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comment::class,'parent_id','id');
+        return $this->hasMany(Comment::class, 'parent_id');
     }
 
     public function user()
