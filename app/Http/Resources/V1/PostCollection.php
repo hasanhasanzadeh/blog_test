@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\V1;
 
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PostCollection extends ResourceCollection
@@ -9,8 +11,8 @@ class PostCollection extends ResourceCollection
     /**
      * Transform the resource collection into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     * @param  Request  $request
+     * @return array|Arrayable|\JsonSerializable
      */
     public function toArray($request)
     {
@@ -26,6 +28,7 @@ class PostCollection extends ResourceCollection
                 'Author'=>$item->user->name,
                  'commentCount'=>count($item->comments),
                  'comments'=>$item->comments,
+                 'likeCount'=>count($item->likes),
                 'createdTim'=>(string) $item->created_at
              ] ;
           })

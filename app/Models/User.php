@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -47,6 +48,9 @@ class User extends Authenticatable implements JWTSubject
     ];
 
 
+    /**
+     * @return HasMany
+     */
     public function comments()
     {
         return $this->hasMany(Comment::class);
@@ -69,7 +73,6 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * @param $newRole
      * @return bool
      */
     public function isAdmin()
@@ -78,5 +81,21 @@ class User extends Authenticatable implements JWTSubject
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
 }

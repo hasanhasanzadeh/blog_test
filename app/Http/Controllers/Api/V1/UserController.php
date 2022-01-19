@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangeUserRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UserStoreRequest;
@@ -11,6 +12,7 @@ use App\Http\Resources\V1\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -23,7 +25,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api',['except'=>['login','register','index','show']]);
+        $this->middleware('auth:api',['except'=>['login','register']]);
     }
 
     /**
@@ -60,7 +62,7 @@ class UserController extends Controller
      * @param RegisterRequest $request
      * @return JsonResponse
      */
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterRequest $request)
     {
         $user=new User();
         $user->name=$request->name;
@@ -125,12 +127,11 @@ class UserController extends Controller
     }
 
     /**
-     * @param $id
+     * @param User $user
      * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user=User::findOrFail($id);
         $user->delete();
         return response()->json([
             'data'=>'done!',
@@ -140,7 +141,7 @@ class UserController extends Controller
 
     /**
      * @param UserStoreRequest $request
-     * @param $id
+     * @param User $user
      * @return JsonResponse
      */
     public function update(UserStoreRequest $request,User $user)
@@ -158,16 +159,39 @@ class UserController extends Controller
     }
 
     /**
-     * @param $id
+     * @param User $user
      * @return JsonResponse
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $user=User::findOrFail($id);
         return response()->json([
             'data'=>new UserResource($user),
             'status'=>'success'
         ],200);
+    }
+
+    /**
+     * @param ChangeUserRequest $request
+     * @return JsonResponse
+     */
+    public function changePassword(ChangeUserRequest $request)
+    {
+       $user=User::findOrFail(auth()->user()->id);
+       $user->password=bcrypt($request->password);
+       $user->save();
+       $this->refreshToken();
+        return response()->json([
+            'data'=>new UserResource($user),
+            'status'=>'success'
+        ],200);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function refreshToken()
+    {
+        return $this->respondWithToken(Auth::guard('api')->refresh());
     }
 
 }

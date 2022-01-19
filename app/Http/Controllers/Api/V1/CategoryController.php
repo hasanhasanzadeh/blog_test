@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Exceptions\NotfoundCategoryException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Http\Resources\V1\CategoryCollection;
 use App\Http\Resources\V1\CategoryResource;
 use App\Models\Category;
 use http\Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -27,7 +28,7 @@ class CategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -37,12 +38,20 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param CategoryRequest $request
+     * @return Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        //
+        $category=new Category();
+        $category->name=$request->name;
+        $category->slug=$request->slug;
+        $category->parent_id=$request->parent_id;
+        $category->save();
+        return response()->json([
+            'data'=>new CategoryResource($category),
+            'status'=>'success'
+        ],201);
     }
 
     /**
@@ -52,7 +61,7 @@ class CategoryController extends Controller
      * @return CategoryResource
      *
      */
-    public function show(Category $category): CategoryResource
+    public function show(Category $category)
     {
             return new CategoryResource($category);
     }
@@ -61,7 +70,7 @@ class CategoryController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -71,23 +80,34 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param CategoryRequest $request
+     * @param Category $category
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoryRequest $request,Category  $category)
     {
-        //
+        $category->name=$request->name;
+        $category->slug=$request->slug;
+        $category->parent_id=$request->parent_id;
+        $category->save();
+        return response()->json([
+            'data'=>new CategoryResource($category),
+            'status'=>'success'
+        ],201);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return response()->json([
+            'data'=>'deleted category',
+            'status'=>'success'
+        ],201);
     }
 }

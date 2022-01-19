@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
 use App\Http\Resources\V1\PostCollection;
 use App\Http\Resources\V1\PostResource;
+use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class PostController extends Controller
 {
@@ -25,7 +27,7 @@ class PostController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -35,8 +37,8 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param PostRequest $request
+     * @return Response
      */
     public function store(PostRequest $request)
     {
@@ -69,7 +71,7 @@ class PostController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -79,9 +81,9 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param PostRequest $request
+     * @param Post $post
+     * @return Response
      */
     public function update(PostRequest $request, Post $post)
     {
@@ -94,21 +96,37 @@ class PostController extends Controller
         return response()->json([
             'data'=>new PostResource($post),
             'status'=>'success'
-        ],200);
+        ],201);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Post $post
+     * @return Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        $post=Post::findOrFail($id)->delete();
+        $post->delete();
         return response()->json([
             'data'=>'done!',
             'status'=>'delete success user'
         ],204);
+    }
+
+    /**
+     * @param Post $post
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function like(Post $post)
+    {
+        $like=new Like();
+        $like->post_id=$post->id;
+        $like->user_id=auth()->user()->id;
+        $like->save();
+        return response()->json([
+            'data'=>'post liked',
+            'status'=>'success'
+        ],201);
     }
 }
