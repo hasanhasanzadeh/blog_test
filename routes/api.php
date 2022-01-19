@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+/**
+ *  @OA\Server(
+ *      url=L5_SWAGGER_CONST_HOST,
+ *      description="L5 Swagger OpenApi dynamic host server"
+ *  )
+ *
+ *  @OA\Server(
+ *      url="https://projects.dev/api/v1",
+ *      description="L5 Swagger OpenApi Server"
+ * )
+ */
 
 // Route for posts and categories show
 Route::group(['middleware'=>'api','prefix'=>'v1','namespace'=>'App\Http\Controllers\Api\V1'],function(){
